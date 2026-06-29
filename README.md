@@ -2,7 +2,6 @@
 
 ClaimLens Triage is a multimodal customer support triage app powered by Gemma 4. It combines a product photo with a customer's complaint, runs a four-agent workflow, applies a small company policy, and produces a structured ticket plus a customer-ready reply.
 
-The app is designed for hackathon demos where agent collaboration needs to be visible: each agent has a distinct role, explicit JSON handoffs, and measurable latency.
 
 ## What It Does
 
