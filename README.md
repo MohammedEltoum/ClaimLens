@@ -86,39 +86,6 @@ Open the local URL:
 http://127.0.0.1:7861/
 ```
 
-By default the app binds to `0.0.0.0`, so phones and other devices on the same Wi-Fi can open the printed local network URL, for example:
-
-```text
-http://192.168.1.23:7861/
-```
-
-If Windows Firewall asks, allow Python on private networks.
-
-To restrict the app to your machine only:
-
-```powershell
-python -m triage_agent.gradio_app --host 127.0.0.1 --port 7861
-```
-
-## Run From The CLI
-
-Run with the default Cerebras provider:
-
-```powershell
-python -m triage_agent --image .\radio2.png --complaint-file .\examples\complaints\cracked_radio.txt --output .\outputs\ticket.json
-```
-
-Run with Gemini:
-
-```powershell
-python -m triage_agent --provider gemini --image .\radio2.png --complaint-file .\examples\complaints\cracked_radio.txt --output .\outputs\ticket.json
-```
-
-Print the full structured ticket to the terminal:
-
-```powershell
-python -m triage_agent --image .\radio2.png --complaint "The product arrived cracked and I want a refund." --json
-```
 
 ## Example Tickets
 
