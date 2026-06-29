@@ -2,21 +2,26 @@
 
 ClaimLens Triage is a multimodal customer support triage app powered by Gemma 4. It combines a product photo with a customer's complaint, runs a four-agent workflow, applies a small company policy, and produces a structured ticket plus a customer-ready reply.
 
+## Live Demo
+
+Try the hosted Hugging Face Spaces demo here:
+
+[ClaimLens Triage on Hugging Face Spaces](https://mohammedeltoum-claimlens.hf.space/)
 
 ## What It Does
 
 A customer submits:
 
-- One product photo, such as a cracked radio, damaged mug, torn headphones, or intact item.
-- One text complaint describing what happened and what resolution they want.
+* One product photo, such as a cracked radio, damaged mug, torn headphones, or intact item.
+* One text complaint describing what happened and what resolution they want.
 
 ClaimLens Triage returns:
 
-- Vision JSON describing physical evidence.
-- Intent JSON describing customer sentiment, urgency, and requested resolution.
-- Policy JSON with the decision, reasoning, escalation flag, and policy references.
-- A concise customer-facing reply.
-- A latency dashboard for each agent and total wall-clock time.
+* Vision JSON describing physical evidence.
+* Intent JSON describing customer sentiment, urgency, and requested resolution.
+* Policy JSON with the decision, reasoning, escalation flag, and policy references.
+* A concise customer-facing reply.
+* A latency dashboard for each agent and total wall-clock time.
 
 ## Architecture
 
@@ -40,21 +45,21 @@ Vision and Intent run in parallel because they do not depend on each other. Poli
 
 ## Agent Roles
 
-| Agent | Input | Output | Purpose |
-| --- | --- | --- | --- |
-| Vision Agent | Product photo | Defect JSON | Reads visual evidence and estimates defect severity |
-| Intent Agent | Complaint text | Intent JSON | Extracts sentiment, urgency, and requested resolution |
-| Policy Agent | Vision JSON, Intent JSON, policy doc | Decision JSON | Applies company rules and decides refund, replacement, denial, or escalation |
-| Reply Agent | Decision JSON | Customer reply | Drafts a short, empathetic support response |
+| Agent        | Input                                | Output         | Purpose                                                                      |
+| ------------ | ------------------------------------ | -------------- | ---------------------------------------------------------------------------- |
+| Vision Agent | Product photo                        | Defect JSON    | Reads visual evidence and estimates defect severity                          |
+| Intent Agent | Complaint text                       | Intent JSON    | Extracts sentiment, urgency, and requested resolution                        |
+| Policy Agent | Vision JSON, Intent JSON, policy doc | Decision JSON  | Applies company rules and decides refund, replacement, denial, or escalation |
+| Reply Agent  | Decision JSON                        | Customer reply | Drafts a short, empathetic support response                                  |
 
 ## Provider Support
 
 The project supports two Gemma 4 providers:
 
-| Provider | Model | Environment variable |
-| --- | --- | --- |
-| Cerebras | `gemma-4-31b` | `CEREBRAS_API_KEY` |
-| Gemini | `gemma-4-31b-it` | `GEMINI_API_KEY` |
+| Provider | Model            | Environment variable |
+| -------- | ---------------- | -------------------- |
+| Cerebras | `gemma-4-31b`    | `CEREBRAS_API_KEY`   |
+| Gemini   | `gemma-4-31b-it` | `GEMINI_API_KEY`     |
 
 The Gradio UI includes a provider selector. The CLI uses Cerebras by default and can switch to Gemini with `--provider gemini`.
 
@@ -75,6 +80,12 @@ GEMINI_API_KEY=your_gemini_api_key_here
 
 ## Run The Gradio App
 
+You can use the hosted Hugging Face Spaces demo:
+
+https://mohammedeltoum-claimlens.hf.space/
+
+Or run the app locally:
+
 ```powershell
 python -m triage_agent.gradio_app --port 7861
 ```
@@ -85,18 +96,17 @@ Open the local URL:
 http://127.0.0.1:7861/
 ```
 
-
 ## Example Tickets
 
 The Gradio intake panel includes generated sample tickets for both good and defective products:
 
-- Radio with cracked casing.
-- Headphones in good condition.
-- Headphones with a torn cushion and cracked band.
-- Mug in good condition.
-- Mug with a chipped rim and hairline crack.
-- Smartwatch in good condition.
-- Smartwatch with a cracked screen.
+* Radio with cracked casing.
+* Headphones in good condition.
+* Headphones with a torn cushion and cracked band.
+* Mug in good condition.
+* Mug with a chipped rim and hairline crack.
+* Smartwatch in good condition.
+* Smartwatch with a cracked screen.
 
 Example images live in [examples/images](D:/gemma_hackathon/examples/images).
 
@@ -106,11 +116,11 @@ The Policy Agent uses [policy/support_policy.md](D:/gemma_hackathon/policy/suppo
 
 The current rules cover:
 
-- **P1 Product damage on arrival:** approve refund or replacement when visible moderate or severe damage supports the request.
-- **P2 Minor cosmetic defects:** avoid automatic full refunds for usable products with minor cosmetic wear.
-- **P3 No visible defect:** deny automated refund or replacement when evidence is missing or weak.
-- **P4 Safety and escalation:** escalate safety, legal, fraud, repeated failure, or mismatched-evidence cases.
-- **P5 Urgency:** urgency alone does not override evidence, but urgent safety or severe-damage cases should escalate.
+* **P1 Product damage on arrival:** approve refund or replacement when visible moderate or severe damage supports the request.
+* **P2 Minor cosmetic defects:** avoid automatic full refunds for usable products with minor cosmetic wear.
+* **P3 No visible defect:** deny automated refund or replacement when evidence is missing or weak.
+* **P4 Safety and escalation:** escalate safety, legal, fraud, repeated failure, or mismatched-evidence cases.
+* **P5 Urgency:** urgency alone does not override evidence, but urgent safety or severe-damage cases should escalate.
 
 ## Output Shape
 
@@ -162,8 +172,8 @@ python -B -m unittest discover -s tests
 
 ClaimLens Triage is not a single hidden prompt. It exposes a collaborative workflow:
 
-- Separate agents own separate responsibilities.
-- Vision and Intent run independently in parallel.
-- Policy receives explicit JSON handoffs from both upstream agents.
-- Reply depends only on the policy decision.
-- The final UI shows handoffs, policy reasoning, and latency so the orchestration is inspectable.
+* Separate agents own separate responsibilities.
+* Vision and Intent run independently in parallel.
+* Policy receives explicit JSON handoffs from both upstream agents.
+* Reply depends only on the policy decision.
+* The final UI shows handoffs, policy reasoning, and latency so the orchestration is inspectable.
