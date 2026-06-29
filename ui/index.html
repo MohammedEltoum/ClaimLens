@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ClaimLens Triage</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Gemma 4 31B</p>
+          <h1>ClaimLens Triage</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="ghost-button" id="exportButton" type="button">Export JSON</button>
+          <button class="primary-button" id="runButton" type="button">Run Triage</button>
+        </div>
+      </header>
+
+      <section class="workspace-grid" aria-label="Triage workspace">
+        <aside class="input-panel" aria-label="Ticket intake">
+          <div class="section-heading">
+            <p class="eyebrow">Input</p>
+            <h2>Ticket Intake</h2>
+          </div>
+
+          <div class="image-intake">
+            <img id="productPreview" src="../radio2.png" alt="Uploaded product evidence preview">
+            <div class="file-row">
+              <label class="file-button" for="imageInput">Choose Photo</label>
+              <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+              <span id="fileName">radio2.png</span>
+            </div>
+          </div>
+
+          <label class="field-label" for="complaintText">Complaint</label>
+          <textarea id="complaintText" spellcheck="true">The radio arrived with the front casing cracked and one of the knobs loose. I bought it as a birthday gift and need a replacement sent as soon as possible.</textarea>
+
+          <div class="inline-actions">
+            <button class="text-button" id="sampleButton" type="button">Sample</button>
+            <button class="text-button" id="clearButton" type="button">Clear</button>
+          </div>
+
+          <div class="policy-strip">
+            <span>Policy</span>
+            <strong>P1-P5</strong>
+          </div>
+        </aside>
+
+        <section class="flow-panel" aria-label="Agent flow">
+          <div class="section-heading">
+            <p class="eyebrow">Agents</p>
+            <h2>Parallel Evidence, Sequential Verdict</h2>
+          </div>
+
+          <div class="parallel-lane">
+            <article class="agent-card" data-agent-card="vision">
+              <div class="agent-head">
+                <div>
+                  <span class="agent-index">01</span>
+                  <h3>Vision Agent</h3>
+                </div>
+                <span class="status-pill idle" data-status="vision">Idle</span>
+              </div>
+              <p class="agent-role">Image -> defect JSON</p>
+              <pre id="visionOutput">{}</pre>
+            </article>
+
+            <article class="agent-card" data-agent-card="intent">
+              <div class="agent-head">
+                <div>
+                  <span class="agent-index">02</span>
+                  <h3>Intent Agent</h3>
+                </div>
+                <span class="status-pill idle" data-status="intent">Idle</span>
+              </div>
+              <p class="agent-role">Text -> intent JSON</p>
+              <pre id="intentOutput">{}</pre>
+            </article>
+          </div>
+
+          <div class="handoff-line" aria-hidden="true"></div>
+
+          <article class="agent-card wide" data-agent-card="policy">
+            <div class="agent-head">
+              <div>
+                <span class="agent-index">03</span>
+                <h3>Policy Agent</h3>
+              </div>
+              <span class="status-pill idle" data-status="policy">Idle</span>
+            </div>
+            <p class="agent-role">Vision + Intent + policy -> decision JSON</p>
+            <pre id="policyOutput">{}</pre>
+          </article>
+
+          <article class="agent-card wide" data-agent-card="reply">
+            <div class="agent-head">
+              <div>
+                <span class="agent-index">04</span>
+                <h3>Reply Agent</h3>
+              </div>
+              <span class="status-pill idle" data-status="reply">Idle</span>
+            </div>
+            <p class="agent-role">Decision -> customer reply</p>
+            <div class="reply-box" id="replyOutput">No reply drafted yet.</div>
+          </article>
+        </section>
+
+        <aside class="decision-panel" aria-label="Decision output">
+          <div class="section-heading">
+            <p class="eyebrow">Output</p>
+            <h2>Decision Board</h2>
+          </div>
+
+          <div class="decision-summary">
+            <span id="decisionBadge" class="decision-badge neutral">Pending</span>
+            <p id="decisionReason">Waiting for agent output.</p>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric">
+              <span>Escalate</span>
+              <strong id="escalateMetric">-</strong>
+            </div>
+            <div class="metric">
+              <span>Urgency</span>
+              <strong id="urgencyMetric">-</strong>
+            </div>
+            <div class="metric">
+              <span>Severity</span>
+              <strong id="severityMetric">-</strong>
+            </div>
+            <div class="metric">
+              <span>Model</span>
+              <strong>Gemma 4</strong>
+            </div>
+          </div>
+
+          <div class="latency-board">
+            <div class="latency-head">
+              <h3>Latency</h3>
+              <span id="totalLatency">0 ms</span>
+            </div>
+            <div class="latency-row">
+              <label>Vision</label>
+              <div><span id="visionBar"></span></div>
+              <strong id="visionLatency">0</strong>
+            </div>
+            <div class="latency-row">
+              <label>Intent</label>
+              <div><span id="intentBar"></span></div>
+              <strong id="intentLatency">0</strong>
+            </div>
+            <div class="latency-row">
+              <label>Policy</label>
+              <div><span id="policyBar"></span></div>
+              <strong id="policyLatency">0</strong>
+            </div>
+            <div class="latency-row">
+              <label>Reply</label>
+              <div><span id="replyBar"></span></div>
+              <strong id="replyLatency">0</strong>
+            </div>
+          </div>
+
+          <div class="event-log">
+            <h3>Run Log</h3>
+            <ol id="eventLog">
+              <li>Ready.</li>
+            </ol>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
